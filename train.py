@@ -5,10 +5,8 @@ import torch.nn.functional as F
 import math
 import numpy as np
 import time
-from SST.MATAN_model import Net
-import torch
 import torch.optim as optim
-import argparse  # 参数设置
+import torch
 from dataset import get_data_deap,get_data_seed
 from config import get_config
 

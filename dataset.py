@@ -35,30 +35,6 @@ class MyDataset(Dataset):
             self.people_label=people_label
 
     def __getitem__(self, index):
-        """
-        image, target = self.data[idx], self.labels[idx]
-        image = Image.fromarray(np.transpose(image, (1, 2, 0)))
-        label=torch.zeros(10)
-        label[self.labels[idx]]=1
-        if self.transform:
-            transform=Change_Compose_32(self.transform,self.trans,self.size_rate)
-            image=transform(image)
-        if self.split=="train" and idx>0 and idx%self.nums==0:
-            mixup_idx=random.randint(0,len(self.data)-1)
-            mixup_image, mixup_target = self.data[mixup_idx], self.labels[mixup_idx]
-            mixup_image = Image.fromarray(np.transpose(mixup_image, (1, 2, 0)))
-
-            mixup_label=torch.zeros(10)
-            mixup_label[self.labels[mixup_idx]]=1
-            if self.transform:
-                transform = Change_Compose_32(self.transform, self.trans,self.size_rate)
-                mixup_image=transform(mixup_image)
-            beta=self.beta
-            lam=np.random.beta(beta,beta)
-            image=lam*image+(1-lam)*mixup_image
-            label=lam*label+(1-lam)*mixup_label
-        return image,label
-        """
         sample = self.data[index, ...]
         sample = torch.Tensor(sample)
         if self.use_catout==True:
