@@ -15,7 +15,7 @@ _C.DATA.SEED_DATA_PATH = '/data/EEG/DE_4D/'
 # _C.DATA.SEED_DATA_PATH = 'G:/Alex/SEED_experiment/Three sessions sample/Channel DE/'
 # number of classes
 # Dataset name
-_C.DATA.DATASET = 'deap'
+_C.DATA.DATASET = 'seed'
 # -----------------------------------------------------------------------------
 # Model settings
 # -----------------------------------------------------------------------------
@@ -25,7 +25,7 @@ _C.MODEL.RESUME = ''
 _C.MODEL.IF_TURN_LR=True
 
 _C.MODEL.DEAP = CN()
-_C.MODEL.DEAP.BATCH_SIZE=48
+_C.MODEL.DEAP.BATCH_SIZE=96
 _C.MODEL.DEAP.OUT=128
 _C.MODEL.DEAP.TIME_DIM=120
 _C.MODEL.DEAP.NUM_CLASSES=2

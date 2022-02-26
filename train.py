@@ -12,6 +12,7 @@ from config import get_config
 
 def train(Model, source_loader, target_loader):
     correct = 0
+    train_correct=0.
     start_time = time.time()
     for (source_data, source_label),(target_data, target_label) in zip(source_loader,target_loader):
         optimizer.zero_grad()
@@ -20,16 +21,19 @@ def train(Model, source_loader, target_loader):
         data=torch.cat([data_s,data_t],0)
         label=torch.cat([label_s,label_t],0)
         Model.fit_one_step(data,label,True)
-        loss=Model.pred_loss+Model.walker_loss+Model.visit_loss*0.6+Model.domain_loss+Model.l2_loss
+        loss=Model.pred_loss+0.1*Model.walker_loss+Model.visit_loss+Model.domain_loss+Model.l2_loss
         loss.backward(retain_graph=False)
         optimizer.step()
         e_output = torch.argmax(Model.target_logits, dim=1)
         correct += torch.eq(e_output,Model.target_y.argmax(dim=1)).float().sum().item()
-    test_acc = round(correct / (len(source_loader.dataset)) * 100,3)
+        train_correct+=Model.acc_nums.item()
+    test_acc = round(correct / (len(target_loader.dataset)) * 100,3)
+    train_acc = round(train_correct/ (len(source_loader.dataset)) * 100, 3)
     use_time = time.time() - start_time
     min = int(use_time // 60)
     sum = int(use_time % 60)
-    print(f"Train Epoch: [{epoch}/{config.EPOCH}], Acc: {test_acc}, Time: {min}:{sum}")
+    print(f"Train Epoch: [{epoch}/{config.EPOCH}], Test Acc: {test_acc}, Train Acc: {train_acc} "
+          f"Walker loss: {Model.walker_loss.item()}, Pred loss: {Model.pred_loss.item()}, Visit loss: {Model.visit_loss.item()}")
     return test_acc
 
 
@@ -66,7 +70,7 @@ if __name__ == '__main__':
                     #  {'params': Model.linear1.bias},
                     #  {'params': Model.linear2.bias},
                     #  {'params': Model.linear3.bias},]
-                    Model.parameters(), lr=0.0001
+                    Model.parameters(), lr=2*0.0001
                 )
 
             elif config.DATA.DATASET == "seed":
@@ -84,7 +88,7 @@ if __name__ == '__main__':
                     #  {'params': Model.linear1.bias},
                     #  {'params': Model.linear2.bias},
                     #  {'params': Model.linear3.bias},]
-                    Model.parameters(), lr=0.0001
+                    Model.parameters(), lr=2*0.0001
                 )
 
             else:
@@ -93,7 +97,7 @@ if __name__ == '__main__':
             for epoch in range(1, config.EPOCH + 1):
                 p = float(i) / epoch
                 l = 2. / (1. + np.exp(-10. * p)) - 1
-                lr = 0.01 / (1. + 10 * p) ** 0.75
+                lr = 0.0045 / (1. + 15 * p) ** 0.75
                 Model.alpha=l
                 if config.MODEL.IF_TURN_LR:
                     for param_group in optimizer.param_groups:
