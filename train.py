@@ -21,7 +21,7 @@ def train(Model, source_loader, target_loader):
         data=torch.cat([data_s,data_t],0)
         label=torch.cat([label_s,label_t],0)
         Model.fit_one_step(data,label,True)
-        loss=Model.pred_loss+0.1*Model.walker_loss+Model.visit_loss+Model.domain_loss+Model.l2_loss
+        loss=Model.pred_loss+0.3*Model.walker_loss+Model.visit_loss+Model.domain_loss+Model.l2_loss
         loss.backward(retain_graph=False)
         optimizer.step()
         e_output = torch.argmax(Model.target_logits, dim=1)
@@ -61,15 +61,10 @@ if __name__ == '__main__':
                                                              index=index,
                                                              i=i,
                                                              num_classes=config.MODEL.DEAP.NUM_CLASSES,
-                                                             batchsize=config.MODEL.DEAP.BATCH_SIZE)
+                                                             batchsize=config.MODEL.DEAP.BATCH_SIZE,
+                                                             choose_index=config.MODEL.DEAP.CHOOSE_LABEL_INDEX)
                 Model = EmotionModel(config.MODEL.DEAP.OUT*config.MODEL.DEAP.TIME_DIM,config.MODEL.DEAP.NUM_CLASSES).cuda()
                 optimizer = optim.Adam(
-                    # [{'params': Model.linear1.weight, 'weight_decay': 0.001},
-                    #  {'params': Model.linear2.weight, 'weight_decay': 0.001},
-                    #  {'params': Model.linear3.weight, 'weight_decay': 0.001},
-                    #  {'params': Model.linear1.bias},
-                    #  {'params': Model.linear2.bias},
-                    #  {'params': Model.linear3.bias},]
                     Model.parameters(), lr=2*0.0001
                 )
 
@@ -82,12 +77,6 @@ if __name__ == '__main__':
                                                              batchsize=config.MODEL.SEED.BATCH_SIZE)
                 Model = EmotionModel(config.MODEL.SEED.OUT * config.MODEL.SEED.TIME_DIM, config.MODEL.SEED.NUM_CLASSES).cuda()
                 optimizer = optim.Adam(
-                    # [{'params': Model.linear1.weight, 'weight_decay': 0.001},
-                    #  {'params': Model.linear2.weight, 'weight_decay': 0.001},
-                    #  {'params': Model.linear3.weight, 'weight_decay': 0.001},
-                    #  {'params': Model.linear1.bias},
-                    #  {'params': Model.linear2.bias},
-                    #  {'params': Model.linear3.bias},]
                     Model.parameters(), lr=2*0.0001
                 )
 
@@ -97,7 +86,7 @@ if __name__ == '__main__':
             for epoch in range(1, config.EPOCH + 1):
                 p = float(i) / epoch
                 l = 2. / (1. + np.exp(-10. * p)) - 1
-                lr = 0.0045 / (1. + 15 * p) ** 0.75
+                lr = 0.01 / (1. + 15 * p) ** 0.75
                 Model.alpha=l
                 if config.MODEL.IF_TURN_LR:
                     for param_group in optimizer.param_groups:

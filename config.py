@@ -10,12 +10,12 @@ _C.EPOCH = 10000
 # -----------------------------------------------------------------------------
 _C.DATA = CN()
 # Path to dataset, could be overwritten by command line argument
-_C.DATA.DEAP_DATA_PATH = '/data/EEG/Channel_DE_sample/Binary/'
+_C.DATA.DEAP_DATA_PATH = '/data/EEG/'
 _C.DATA.SEED_DATA_PATH = '/data/EEG/DE_4D/'
 # _C.DATA.SEED_DATA_PATH = 'G:/Alex/SEED_experiment/Three sessions sample/Channel DE/'
 # number of classes
 # Dataset name
-_C.DATA.DATASET = 'seed'
+_C.DATA.DATASET = 'deap'
 # -----------------------------------------------------------------------------
 # Model settings
 # -----------------------------------------------------------------------------
@@ -26,9 +26,10 @@ _C.MODEL.IF_TURN_LR=True
 
 _C.MODEL.DEAP = CN()
 _C.MODEL.DEAP.BATCH_SIZE=96
-_C.MODEL.DEAP.OUT=128
-_C.MODEL.DEAP.TIME_DIM=120
+_C.MODEL.DEAP.OUT=32
+_C.MODEL.DEAP.TIME_DIM=5
 _C.MODEL.DEAP.NUM_CLASSES=2
+_C.MODEL.DEAP.CHOOSE_LABEL_INDEX=1
 _C.MODEL.SEED = CN()
 _C.MODEL.SEED.BATCH_SIZE=48
 _C.MODEL.SEED.OUT=310
